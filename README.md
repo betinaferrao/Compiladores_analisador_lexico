@@ -32,5 +32,5 @@ Observações:
 - Implementa estratégia Maximal Munch.
 - Baseado em máquina de estados (diagrama de transição).
 
-# Parte 
+# Parte B
 
