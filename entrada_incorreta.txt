@@ -1,0 +1,9 @@
+def 123soma2(int @A, int B) {
+    int resultado;
+    if (A >> B) {
+        resultado == A;
+    } else {
+        resultado = B;
+    }
+    return resultado;
+}

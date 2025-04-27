@@ -1,0 +1,9 @@
+def soma(int A, int B) {
+    int resultado;
+    if (A > B) {
+        resultado = A + 1;
+    } else {
+        resultado = B;
+    }
+    return resultado;
+}
