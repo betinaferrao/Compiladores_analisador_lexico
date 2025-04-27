@@ -18,7 +18,7 @@ Implementação de Tabela de símbolos para palavras-chave e identificadores.
 
 Como Compilar e Executar
 ```
-gcc -o analisador_lexico_parte_A analisador_lexico_manual_.c
+gcc -o analisador_lexico_parte_A analisador_lexico_parte_A.c
 ./analisador_lexico_parte_A entrada_correta.txt
 ./analisador_lexico_parte_A entrada_incorreta.txt
 ```
