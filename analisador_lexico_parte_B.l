@@ -21,6 +21,7 @@ int contador = 0;
 
 
 "def"       { tokens[contador++] = "def"; }
+"id"       { tokens[contador++] = "id"; }
 "int"       { tokens[contador++] = "int"; }
 "if"        { tokens[contador++] = "if"; }
 "else"      { tokens[contador++] = "else"; }
