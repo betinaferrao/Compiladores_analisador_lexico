@@ -43,7 +43,7 @@ int num_simbolos = 0;
 
 // Palavras-chave conhecidas
 const char *palavras_chave[] = {
-    "def", "int", "if", "else", "return", "print", "principal"};
+    "def", "int", "if", "else", "return", "print"};
 const int num_palavras_chave = sizeof(palavras_chave) / sizeof(palavras_chave[0]);
 
 
