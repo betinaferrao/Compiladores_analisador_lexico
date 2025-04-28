@@ -46,18 +46,6 @@ const char *palavras_chave[] = {
     "def", "int", "if", "else", "return", "print", "principal"};
 const int num_palavras_chave = sizeof(palavras_chave) / sizeof(palavras_chave[0]);
 
-// Verifica se uma palavra é palavra-chave
-int eh_palavra_chave(const char *palavra)
-{
-    for (int i = 0; i < num_palavras_chave; i++)
-    {
-        if (strcmp(palavra, palavras_chave[i]) == 0)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
 
 // Adiciona identificador ou palavra-chave na tabela de símbolos
 void adicionar_tabela_simbolos(const char *lexema, TipoToken tipo)
@@ -129,16 +117,24 @@ void imprimir_token(Token token, int linha, int coluna)
         tipo_str = "PALAVRA_CHAVE";
         break;
     case TOKEN_ERRO:
-        printf("\033[0;31m");
-        resumo_dos_erros(token, linha, coluna);
         tipo_str = "ERRO";
         break;
     default:
         tipo_str = "DESCONHECIDO";
         break;
     }
-    printf("%s(%s) - Linha %d, Coluna %d\n", tipo_str, token.lexema, linha, coluna);
-    printf("\033[0m");
+
+    if (token.tipo == TOKEN_ERRO)
+    {
+        printf("\033[0;31m"); 
+        printf("%s(%s) - Linha %d, Coluna %d\n", tipo_str, token.lexema, linha, coluna);
+        printf("\033[0m");
+        resumo_dos_erros(token, linha, coluna); // já salva para o resumo também
+    }
+    else
+    {
+        printf("%s(%s)\n", tipo_str, token.lexema);
+    }
 }
 
 // Analisador léxico principal
@@ -188,7 +184,7 @@ void analisador_lexico(FILE *arquivo)
                 estado = 3; // OP_REL
                 coluna_inicio = coluna;
             }
-            else if (c == '(' || c == ')' || c == '{' || c == '}' || c == ',' || c == ';' || c == '+' || c == '-' || c == '%')
+            else if (c == '(' || c == ')' || c == '{' || c == '}' || c == ',' || c == ';' || c == '+' || c == '%')
             {
                 // Ignora esses símbolos
             }
@@ -214,12 +210,17 @@ void analisador_lexico(FILE *arquivo)
             {
                 palavra[idx] = '\0';
                 Token token;
-                if (eh_palavra_chave(palavra))
+                int encontrado = 0;
+                for (int i = 0; i < num_simbolos; i++)
                 {
-                    token.tipo = TOKEN_PALAVRA_CHAVE;
-                    adicionar_tabela_simbolos(palavra, TOKEN_PALAVRA_CHAVE);
+                    if (strcmp(tabela_simbolos[i].lexema, palavra) == 0)
+                    {
+                        token.tipo = tabela_simbolos[i].tipo;
+                        encontrado = 1;
+                        break;
+                    }
                 }
-                else
+                if (!encontrado)
                 {
                     token.tipo = TOKEN_IDENT;
                     adicionar_tabela_simbolos(palavra, TOKEN_IDENT);
@@ -288,45 +289,77 @@ void analisador_lexico(FILE *arquivo)
             break;
 
         case 3: // OP_REL
-            if (c == '=')
+            palavra[idx] = '\0';
+            Token token;
+        
+            if (palavra[0] == '!')
             {
-                palavra[idx++] = c;
-                palavra[idx] = '\0';
-                Token token;
-                token.tipo = TOKEN_OP_RELACIONAL;
-                strcpy(token.lexema, palavra);
-                imprimir_token(token, linha, coluna_inicio);
-                estado = 0;
-                idx = 0;
+                if (c == '=')
+                {
+                    palavra[idx++] = c;
+                    palavra[idx] = '\0';
+                    token.tipo = TOKEN_OP_RELACIONAL; 
+                }
+                else
+                {
+                    token.tipo = TOKEN_ERRO;
+                    ungetc(c, arquivo); 
+                    coluna--;
+                }
             }
-            else if ((palavra[0] == '>' && c == '>') ||
-                     (palavra[0] == '<' && (c == '<' || (c != ' ' && c != '='))) ||
-                     (palavra[0] == '!' && (c != '=' && c != ' ')) ||
-                     (palavra[0] == '=' && (c != '=' && c != ' ')))
-
+            else if (palavra[0] == '=')
             {
-                palavra[1] = c;
-                palavra[2] = '\0';
-                Token token;
-                token.tipo = TOKEN_ERRO;
-                strcpy(token.lexema, palavra);
-                imprimir_token(token, linha, coluna_inicio);
-                estado = 0;
-                idx = 0;
+                if (c == '=')
+                {
+                    palavra[idx++] = c;
+                    palavra[idx] = '\0';
+                    token.tipo = TOKEN_OP_RELACIONAL;
+                }
+                else
+                {
+                    token.tipo = TOKEN_OP_RELACIONAL;
+                    ungetc(c, arquivo);
+                    coluna--;
+                }
+            }
+            else if (palavra[0] == '<' || palavra[0] == '>')
+            {
+                if (c == '=')
+                {
+                    palavra[idx++] = c;
+                    palavra[idx] = '\0';
+                    token.tipo = TOKEN_OP_RELACIONAL;
+                }
+                else if ((palavra[0] == '<' && c == '>'))
+                {
+                    palavra[idx++] = c;
+                    palavra[idx] = '\0';
+                    token.tipo = TOKEN_OP_RELACIONAL;
+                }
+                else if (isalnum(c) || c == '<' || c == '>' || c == '!' || c == '=')
+                {
+                    palavra[idx++] = c;
+                    palavra[idx] = '\0';
+                    token.tipo = TOKEN_ERRO;
+                }
+                else
+                {
+                    token.tipo = TOKEN_OP_RELACIONAL; 
+                    ungetc(c, arquivo);
+                    coluna--;
+                }
             }
             else
             {
-                palavra[idx] = '\0';
-                Token token;
-                token.tipo = TOKEN_OP_RELACIONAL;
-                strcpy(token.lexema, palavra);
-                imprimir_token(token, linha, coluna_inicio);
-                estado = 0;
-                idx = 0;
-                ungetc(c, arquivo);
-                coluna--;
+                token.tipo = TOKEN_ERRO; 
             }
+        
+            strcpy(token.lexema, palavra);
+            imprimir_token(token, linha, coluna_inicio);
+            estado = 0;
+            idx = 0;
             break;
+        
         }
     }
 
@@ -335,12 +368,17 @@ void analisador_lexico(FILE *arquivo)
     {
         palavra[idx] = '\0';
         Token token;
-        if (eh_palavra_chave(palavra))
+        int encontrado = 0;
+        for (int i = 0; i < num_simbolos; i++)
         {
-            token.tipo = TOKEN_PALAVRA_CHAVE;
-            adicionar_tabela_simbolos(palavra, TOKEN_PALAVRA_CHAVE);
+            if (strcmp(tabela_simbolos[i].lexema, palavra) == 0)
+            {
+                token.tipo = tabela_simbolos[i].tipo;
+                encontrado = 1;
+                break;
+            }
         }
-        else
+        if (!encontrado)
         {
             token.tipo = TOKEN_IDENT;
             adicionar_tabela_simbolos(palavra, TOKEN_IDENT);
@@ -368,6 +406,14 @@ void analisador_lexico(FILE *arquivo)
     mostrar_tabela_simbolos();
 }
 
+void inicializar_tabela_simbolos()
+{
+    for (int i = 0; i < num_palavras_chave; i++)
+    {
+        adicionar_tabela_simbolos(palavras_chave[i], TOKEN_PALAVRA_CHAVE);
+    }
+}
+
 // Função principal
 int main(int argc, char *argv[])
 {
@@ -386,6 +432,7 @@ int main(int argc, char *argv[])
 
     printf("  Processamento das Linhas  \n");
     printf("----------------------------\n");
+    inicializar_tabela_simbolos();
     analisador_lexico(arquivo);
 
     fclose(arquivo);
