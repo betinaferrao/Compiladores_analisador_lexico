@@ -12,6 +12,8 @@ Alunas: Betina Corazza Ferrão e Mariana Amaral Steffen
 #define TAM_MAX 1000
 char *tokens[TAM_MAX];
 int contador = 0;
+int linha = 1;
+int coluna = 1;
 
 %}
 
@@ -19,38 +21,36 @@ int contador = 0;
 
 %%
 
+"id"       { tokens[contador++] = "id"; coluna += yyleng; }
+"def"      { tokens[contador++] = "def"; coluna += yyleng; }
+"num"      { tokens[contador++] = "num"; coluna += yyleng; }
+"int"      { tokens[contador++] = "int"; coluna += yyleng; }
+"if"       { tokens[contador++] = "if"; coluna += yyleng; }
+"else"     { tokens[contador++] = "else"; coluna += yyleng; }
+"print"    { tokens[contador++] = "print"; coluna += yyleng; }
+"return"   { tokens[contador++] = "return"; coluna += yyleng; }
 
-"def"       { tokens[contador++] = "def"; }
-"id"       { tokens[contador++] = "id"; }
-"int"       { tokens[contador++] = "int"; }
-"if"        { tokens[contador++] = "if"; }
-"else"      { tokens[contador++] = "else"; }
-"print"     { tokens[contador++] = "print"; }
-"return"    { tokens[contador++] = "return"; }
+"<="       { tokens[contador++] = "<="; coluna += yyleng; }
+">="       { tokens[contador++] = ">="; coluna += yyleng; }
+"=="       { tokens[contador++] = "=="; coluna += yyleng; }
+"!="       { tokens[contador++] = "!="; coluna += yyleng; }
+"<"        { tokens[contador++] = "<"; coluna += yyleng; }
+">"        { tokens[contador++] = ">"; coluna += yyleng; }
+"+"        { tokens[contador++] = "+"; coluna += yyleng; }
+"-"        { tokens[contador++] = "-"; coluna += yyleng; }
+"*"        { tokens[contador++] = "*"; coluna += yyleng; }
+"/"        { tokens[contador++] = "/"; coluna += yyleng; }
+"="        { tokens[contador++] = "="; coluna += yyleng; }
 
+"("        { tokens[contador++] = "("; coluna += yyleng; }
+")"        { tokens[contador++] = ")"; coluna += yyleng; }
+"{"        { tokens[contador++] = "{"; coluna += yyleng; }
+"}"        { tokens[contador++] = "}"; coluna += yyleng; }
+","        { tokens[contador++] = ","; coluna += yyleng; }
+";"        { tokens[contador++] = ";"; coluna += yyleng; }
 
-"<="        { tokens[contador++] = "<="; }
-">="        { tokens[contador++] = ">="; }
-"=="        { tokens[contador++] = "=="; }
-"!="        { tokens[contador++] = "!="; }
-"<"         { tokens[contador++] = "<"; }
-">"         { tokens[contador++] = ">"; }
-"+"         { tokens[contador++] = "+"; }
-"-"         { tokens[contador++] = "-"; }
-"*"         { tokens[contador++] = "*"; }
-"/"         { tokens[contador++] = "/"; }
-"="         { tokens[contador++] = "="; }
-
-
-"("         { tokens[contador++] = "("; }
-")"         { tokens[contador++] = ")"; }
-"{"         { tokens[contador++] = "{"; }
-"}"         { tokens[contador++] = "}"; }
-","         { tokens[contador++] = ","; }
-";"         { tokens[contador++] = ";"; }
-
-[ \t\r\n]+  { }
-
+[ \t\r]+   { coluna += yyleng; } 
+\n         { linha++; coluna = 1; } 
 
 [a-zA-Z_][a-zA-Z0-9_]* { 
     char *id_token = (char *)malloc(strlen(yytext) + 1); 
@@ -67,7 +67,7 @@ int contador = 0;
 
 
 . { 
-    printf("Erro léxico: caractere inesperado '%s'\n", yytext); 
+    printf("Erro léxico na linha %d, coluna %d: caractere inesperado '%s'\n", linha, coluna, yytext);
     exit(1); 
 }
 
