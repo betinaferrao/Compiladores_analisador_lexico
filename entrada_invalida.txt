@@ -3,7 +3,7 @@ def 123soma2(int @A, int B) {
     if (A > B) {
         resultado == A;
     } else {
-        resultado = B;
+        resultado !=! B;
     }
     return resultado;
 }
