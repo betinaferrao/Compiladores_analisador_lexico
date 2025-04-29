@@ -55,7 +55,6 @@ const char* buscar_simbolo(const char *nome) {
 "+"        { tokens[contador++] = "+"; coluna += yyleng; }
 "-"        { tokens[contador++] = "-"; coluna += yyleng; }
 "*"        { tokens[contador++] = "*"; coluna += yyleng; }
-"/"        { tokens[contador++] = "/"; coluna += yyleng; }
 "="        { tokens[contador++] = "="; coluna += yyleng; }
 
 "("        { tokens[contador++] = "("; coluna += yyleng; }
@@ -79,9 +78,14 @@ const char* buscar_simbolo(const char *nome) {
 
 
 [0-9]+ { 
-    char *num_token = (char *)malloc(strlen(yytext) + 1); 
-    strcpy(num_token, yytext);
-    tokens[contador++] = num_token; 
+    // char *num_token = (char *)malloc(strlen(yytext) + 1); 
+    // strcpy(num_token, yytext);
+    // tokens[contador++] = num_token; 
+    const char* tipo = buscar_simbolo(yytext);
+    if(tipo == NULL) {
+        inserir_simbolo(yytext, "NUMERICO");
+    } 
+    tokens[contador++] = strdup(yytext);
     coluna += yyleng;
 }
 
