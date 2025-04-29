@@ -1,5 +1,5 @@
-// Analisador Léxico
-// Integrantes: Betina Corazza Ferrão e Mariana Amaral.
+// Analisador Léxico A
+// Integrantes: Betina Corazza Ferrão e Mariana Amaral Steffen 
 
 #include <stdio.h>
 #include <stdlib.h>
