@@ -40,7 +40,6 @@ typedef struct
     TipoToken tipo;
 } Simbolo;
 
-// Tabela de símbolos global
 Simbolo tabela_simbolos[MAX_SIMBOLOS];
 char mensagem_erro[MAX_ERROS][TAMANHO_MSG];
 int error_count = 0;
@@ -67,7 +66,6 @@ void adicionar_tabela_simbolos(const char *lexema, TipoToken tipo)
     num_simbolos++;
 }
 
-// Mostra o erro
 void resumo_dos_erros(Token token, int linha, int coluna)
 {
     sprintf(mensagem_erro[error_count], "(%s): Linha: %d Coluna: %d\n", token.lexema, linha, coluna);
@@ -184,7 +182,6 @@ void imprimir_token(Token token, int linha, int coluna)
     {
         printf("%s(%s)\n", tipo_str, token.lexema);
 
-        // Só adiciona à Tabela de Símbolos se for IDENT, PALAVRA_CHAVE, NUM ou OP_RELACIONAL
         if (token.tipo == TOKEN_IDENT ||
             token.tipo == TOKEN_PALAVRA_CHAVE ||
             token.tipo == TOKEN_NUM ||
@@ -376,7 +373,6 @@ void analisador_lexico(FILE *arquivo)
 
             case 3: // OP_REL
             if (c == '=' && (palavra[0] == '>' || palavra[0] == '<' || palavra[0] == '!' || palavra[0] == '=')) {
-                // >=, <=, !=, ==
                 palavra[idx++] = c;
                 palavra[idx] = '\0';
                 Token token;
@@ -386,7 +382,6 @@ void analisador_lexico(FILE *arquivo)
                 estado = 0;
                 idx = 0;
             } else if (palavra[0] == '!' && c != '=' ) {
-                // Erro: ! sozinho não é operador relacional
                 palavra[idx] = '\0';
                 Token token;
                 token.tipo = TOKEN_ERRO;
@@ -397,7 +392,6 @@ void analisador_lexico(FILE *arquivo)
                 ungetc(c, arquivo);
                 coluna--;
             } else {
-                // Operador simples: >, <, =
                 palavra[idx] = '\0';
                 Token token;
                 token.tipo = TOKEN_OP_RELACIONAL;
