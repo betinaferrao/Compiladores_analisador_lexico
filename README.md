@@ -2,21 +2,16 @@
 
 Integrantes: Betina Corazza Ferrão e Mariana Amaral.
 
-# Parte A
+Este programa é um analisador léxico construído manual e caracter por caracter, baseado em diagramas de transição.
 
-Analisador léxico baseado em diagrama de transição, que:
+O analisador reconhece os seguintes tokens:
 
-- Lê o arquivo caracter por caracter.
-- Reconhece palavras-chave, identificadores, números inteiros e operadores relacionais (>, <, =, >=, <=, !=).
-- Ignora parênteses, chaves, vírgulas, ponto e vírgula, +, -, %.
-
-Detecta erros léxicos como:
-
-- Caractere inválido (ex: @, #).
-- Identificadores incorretos (ex: 123abc).
-- Operadores inválidos (>>, <<).
-
-Implementação de Tabela de símbolos para palavras-chave e identificadores.
+- Palavras-chave: def, int, if, else, return, print
+- Identificadores (variáveis e nomes de funções)
+- Números inteiros
+- Operadores relacionais: >, <, =, >=, <=, !=, ==
+- Símbolos especiais: parênteses, chaves, vírgulas, ponto-e-vírgula, operadores aritméticos +, %
+- Erros léxicos (como 123abc e símbolos inválidos)
 
 Como Compilar e Executar
 
