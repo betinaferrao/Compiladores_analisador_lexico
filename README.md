@@ -39,11 +39,6 @@ Como Compilar e Executar
 ```
 flex analisador_lexico_parte_B.l
 gcc -o lexer lex.yy.c -lfl
-```
-
-Depois, escolher uma das opções de teste:
-
-```
 ./lexer entrada_invalida.lsi
 ./lexer entrada_valida.lsi
 
@@ -51,7 +46,7 @@ Depois, escolher uma das opções de teste:
 
 Saída
 
-- Se a compilação funcionar, uma lista de tokens reconhecidos.
+- Se a compilação funcionar, uma lista de tokens reconhecidos e tabela de símbolos.
 - Se um erro for encontrado, uma mensagem de erro e o caractere inesperado.
 
 Observações:
